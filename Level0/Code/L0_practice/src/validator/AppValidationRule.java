@@ -36,8 +36,8 @@ public class AppValidationRule {
         T input;
         do {
             System.out.println(message);
-            input = validator.validate((T) scanner.nextLine());
-        } while (input == null && printWrongFormatInput());
+            input = (T) scanner.nextLine();
+        } while ((input == null || !validator.validate(input)) && printWrongFormatInput());
         return input;
     }
 
@@ -48,19 +48,19 @@ public class AppValidationRule {
         do {
             System.out.print(prompt);
             try {
-                input = validator.validate(parser.parse(scanner.nextLine()));
+                input = parser.parse(scanner.nextLine());
             } catch (Exception e) {
                 input = null;
             }
-        } while (input == null && printWrongFormatInput());
+        } while ((input == null || !validator.validate(input)) && printWrongFormatInput());
         return input;
     }
 
-    public static String NameRule(String input) {
-        return (input.length() < MAX_NAME_LENGTH) ? input : null;
+    public static boolean NameRule(String input) {
+        return input.length() < MAX_NAME_LENGTH;
     }
 
-    public static Integer EnrollYearRule(int input) {
-        return input > 1900 ? input : null;
+    public static boolean EnrollYearRule(int input) {
+        return input > 1900;
     }
 }
