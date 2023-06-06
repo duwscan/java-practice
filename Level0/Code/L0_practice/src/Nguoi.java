@@ -1,31 +1,27 @@
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Nguoi {
-    private static long autoIncrement = 1;
 
-    private long id;
-    private String name;
-    private Date dateOfBirth;
-    private String address;
-    private Double height;
-    private Double weight;
 
-    public Nguoi(String name, Date dateOfBirth, String address, Double height, Double weight) {
-        this.id = autoIncrement++;
-        this.name = name;
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
-        this.height = height;
-        this.weight = weight;
+    private static long id;
+
+    static {
+        id++;
+        // auto increment if an Instance is created
     }
 
-    public long getId() {
+    private String name;
+    private LocalDate dateOfBirth;
+
+    public static long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    private String address;
+
+
+    private Double height;
+    private Double weight;
 
     public String getName() {
         return name;
@@ -35,11 +31,11 @@ public class Nguoi {
         this.name = name;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -65,5 +61,28 @@ public class Nguoi {
 
     public void setWeight(Double weight) {
         this.weight = weight;
+    }
+
+    public Nguoi(String name, LocalDate dateOfBirth, String address, Double height, Double weight) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.height = height;
+        this.weight = weight;
+    }
+
+    public Nguoi() {
+
+    }
+
+    @Override
+    public String toString() {
+        return "Nguoi{" +
+                "name='" + name + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", address='" + address + '\'' +
+                ", height=" + height +
+                ", weight=" + weight +
+                '}';
     }
 }

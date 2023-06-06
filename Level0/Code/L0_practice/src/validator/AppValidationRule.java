@@ -1,5 +1,6 @@
 package validator;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class AppValidationRule {
@@ -46,7 +47,7 @@ public class AppValidationRule {
         Scanner scanner = new Scanner(System.in);
         T input;
         do {
-            System.out.print(prompt);
+            System.out.println(prompt);
             try {
                 input = parser.parse(scanner.nextLine());
             } catch (Exception e) {
@@ -61,6 +62,31 @@ public class AppValidationRule {
     }
 
     public static boolean EnrollYearRule(int input) {
-        return input > 1900;
+        return input > MIN_START_YEAR;
+    }
+
+
+    public static boolean DateOfBirthRule(LocalDate input) {
+        return input.getYear() > MIN_START_YEAR;
+    }
+
+    public static boolean AddressRule(String input) {
+        return input.length() < MAX_ADDRESS_LENGTH;
+    }
+
+    public static boolean HeightRule(double input) {
+        return input > MIN_HEIGHT && input < MAX_HEIGHT;
+    }
+
+    public static boolean WeightRule(double input) {
+        return input > MIN_WEIGHT && input < MAX_WEIGHT;
+    }
+
+    public static boolean SchoolNameRule(String input) {
+        return input.length() < MAX_SCHOOL_LENGTH;
+    }
+
+    public static boolean GPARule(double input) {
+        return input > MIN_GPA && input < MAX_GPA;
     }
 }
