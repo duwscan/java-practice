@@ -1,0 +1,1 @@
+SinhVien{studentId='SV1', universityName='hn'', enrollYear=2003, gpa=7.0, hocluc=Kha} Nguoi{name='Ninh Duc Tung An', dateOfBirth=2003-12-06, address='Hanoi', height=75.0, weight=78.0}

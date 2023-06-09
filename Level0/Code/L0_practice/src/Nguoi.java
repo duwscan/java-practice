@@ -2,18 +2,12 @@ import java.time.LocalDate;
 
 public class Nguoi {
 
-
-    private static long id;
-
-    static {
-        id++;
-        // auto increment if an Instance is created
-    }
-
+    private static long idIncrement = 1;
+    private long id;
     private String name;
     private LocalDate dateOfBirth;
 
-    public static long getId() {
+    public long getId() {
         return id;
     }
 
@@ -65,6 +59,7 @@ public class Nguoi {
 
     public Nguoi(String name, LocalDate dateOfBirth, String address, Double height, Double weight) {
         this.name = name;
+        this.id = idIncrement++;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.height = height;

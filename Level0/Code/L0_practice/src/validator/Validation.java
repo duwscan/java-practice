@@ -3,7 +3,7 @@ package validator;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class AppValidationRule {
+public class Validation {
     public static final int MAX_NAME_LENGTH = 100;
     public static final int MAX_ADDRESS_LENGTH = 300;
     public static final double MIN_HEIGHT = 50.0;
@@ -15,8 +15,10 @@ public class AppValidationRule {
     public static final int MIN_START_YEAR = 1900;
     public static final double MIN_GPA = 0.0;
     public static final double MAX_GPA = 10.0;
+    public static final String[] UPDATABLE_PROPERTIES = {"TEN", "NGAY_SINH", "DIA_CHI", "CHIEU_CAO", "CAN_NANG", "TEN_TRUONG", "NAM_HOC", "DIEM"};
+    public static final String[] HOC_LUC = {"Kem", "Yeu", "Trung Binh", "Kha", "Gioi", "Xuat sac"};
 
-    private static boolean printWrongFormatInput() {
+    static boolean printWrongFormatInput() {
         System.out.println("Your input is inappropriate!!");
         // return true vì chỉ khi có lỗi thì hàm này mới được call
         return true;
@@ -31,19 +33,19 @@ public class AppValidationRule {
      * a runtime exception if the type casting is not valid . it will result in a ClassCastException at runtime
      */
     @Deprecated
-    public static <T> T getInput(String message, InputValidator<T> validator) {
+    public static <T> T getInput(String message, InputRule<T> validator) {
         // to validate String type
         Scanner scanner = new Scanner(System.in);
         T input;
         do {
             System.out.println(message);
             input = (T) scanner.nextLine();
-        } while ((input == null || !validator.validate(input)) && printWrongFormatInput());
+        } while ((input == null || !validator.rule(input)) && printWrongFormatInput());
         return input;
     }
 
     // validate Number Type
-    public static <T> T getInput(String prompt, InputParser<T> parser, InputValidator<T> validator) {
+    public static <T> T getInput(String prompt, InputParser<T> parser, InputRule<T> validator) {
         Scanner scanner = new Scanner(System.in);
         T input;
         do {
@@ -53,7 +55,7 @@ public class AppValidationRule {
             } catch (Exception e) {
                 input = null;
             }
-        } while ((input == null || !validator.validate(input)) && printWrongFormatInput());
+        } while ((input == null || !validator.rule(input)) && printWrongFormatInput());
         return input;
     }
 
@@ -75,11 +77,11 @@ public class AppValidationRule {
     }
 
     public static boolean HeightRule(double input) {
-        return input > MIN_HEIGHT && input < MAX_HEIGHT;
+        return input >= MIN_HEIGHT && input <= MAX_HEIGHT;
     }
 
     public static boolean WeightRule(double input) {
-        return input > MIN_WEIGHT && input < MAX_WEIGHT;
+        return input >= MIN_WEIGHT && input <= MAX_WEIGHT;
     }
 
     public static boolean SchoolNameRule(String input) {
@@ -87,6 +89,14 @@ public class AppValidationRule {
     }
 
     public static boolean GPARule(double input) {
-        return input > MIN_GPA && input < MAX_GPA;
+        return input >= MIN_GPA && input <= MAX_GPA;
+    }
+
+    public static boolean UpdateSinhVienRule(int choice) {
+        return choice > 0 && choice <= UPDATABLE_PROPERTIES.length;
+    }
+
+    public static boolean getChoiceHocLucRule(int choice) {
+        return choice > 0 && choice <= HOC_LUC.length;
     }
 }
