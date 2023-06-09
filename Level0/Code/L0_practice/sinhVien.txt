@@ -1,1 +1,4 @@
-SinhVien{studentId='SV1', universityName='hn'', enrollYear=2003, gpa=7.0, hocluc=Kha} Nguoi{name='Ninh Duc Tung An', dateOfBirth=2003-12-06, address='Hanoi', height=75.0, weight=78.0}
+SinhVien{studentId='SV1', universityName='Hanoi', enrollYear=2020, gpa=1.0, hocluc=Kem} Nguoi{name='Ninh Duc Tung An 1', dateOfBirth=2003-12-06, address='Hanoi'', height=245.0, weight=75.0}
+SinhVien{studentId='SV2', universityName='Hanoi', enrollYear=2022, gpa=3.0, hocluc=YEU} Nguoi{name='Ninh DUc Tung AN 2', dateOfBirth=2004-06-08, address='Hanoi', height=50.0, weight=5.0}
+SinhVien{studentId='SV4', universityName='Hanoi', enrollYear=2023, gpa=1.0, hocluc=Kem} Nguoi{name='Ninh Duc Tung An 4', dateOfBirth=2000-12-06, address='Hanoi', height=123.0, weight=65.0}
+SinhVien{studentId='SV5', universityName='hanoi', enrollYear=2021, gpa=1.0, hocluc=Kem} Nguoi{name='Ninh Duc Tung An 5', dateOfBirth=1999-07-09, address='Hanoi', height=75.0, weight=75.0}

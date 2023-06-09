@@ -62,6 +62,7 @@ public class SinhVienController {
                 return new FoundSinhVien(arr.get(i), i);
             }
         }
+        System.out.println("Khong tim thay nhan Sinh vien");
         return null;
     }
 
@@ -78,6 +79,10 @@ public class SinhVienController {
     }
 
     public static void updateSinhVien(ArrayList<SinhVien> arr, FoundSinhVien updateSinhVien) {
+        if (updateSinhVien == null) {
+            System.out.println("Khong the cap nhat neu khong ton tai");
+            return;
+        }
         System.out.println("Ban muon sua thuoc tinh nao cua Sinh Vien:");
 
         for (int i = 0; i < UPDATABLE_PROPERTIES.length; i++) {
@@ -151,25 +156,70 @@ public class SinhVienController {
         }
     }
 
-    public static void printPercentageSinhVienHocLuc(ArrayList<SinhVien> arr) {
-        arr.sort(Comparator.comparingDouble(SinhVien::getPercentage).reversed());
-        for (SinhVien a : arr) {
-            System.out.println(arr.indexOf(a) + ".Hoc luc:" + a.getPercentage());
+    /**
+     * @deprecated have new function {@function percentageStatistics} to do both
+     */
+    public static void printPercentageSinhVienGPA(ArrayList<SinhVien> arr) {
+        Map<Double, Double> gpaFrequency = new HashMap<>();
+        for (SinhVien score : arr) {
+            gpaFrequency.put(score.getGpa(), gpaFrequency.getOrDefault(score.getGpa(), 0.0) + 1);
+        }
+        int totalScores = arr.size();
+        for (Double score : gpaFrequency.keySet()) {
+            Double frequency = gpaFrequency.get(score);
+            double percentage = frequency / totalScores * 100;
+            System.out.println(score + ": " + percentage + "%");
         }
     }
 
+    /**
+     * @deprecated have new function {@function percentageStatistics} to do both
+     */
     public static void printOverallPercentage(ArrayList<SinhVien> arr) {
+        arr.sort(Comparator.comparingDouble(SinhVien::getGpa).reversed());
         Map<HocLuc, Double> hocLucFrequency = new HashMap<>();
         for (SinhVien score : arr) {
-            HocLuc hocLuc = HocLuc.getHocLuc(score.getGpa());
-            hocLucFrequency.put(hocLuc, hocLucFrequency.getOrDefault(hocLuc, 0.0) + 1);
+            hocLucFrequency.put(score.getHocLuc(), hocLucFrequency.getOrDefault(score.getHocLuc(), 0.0) + 1);
         }
         int totalScores = arr.size();
         for (HocLuc hocLuc : hocLucFrequency.keySet()) {
             Double frequency = hocLucFrequency.get(hocLuc);
             double percentage = frequency / totalScores * 100;
-            System.out.println(hocLuc.getAlias() + ": " + percentage + "%");
+            System.out.println(hocLuc + ": " + percentage + "%");
         }
+    }
+
+    /**
+     * param arr              : list we wanna statistics
+     * param getterKeySymbol: which is mention below
+     * @type T, U
+     * @method getKeySymbolic => override with the getter method of Object U type
+     * to get the T which is property of U so that we can declare
+     * that thing we wanna statistics by percent is that property
+     */
+    protected interface KeySymbolic<T, U> {
+        T getKeySymbolic(U item);
+    }
+
+    public static <T, U> Map<T, Double> percentageStatistics(ArrayList<U> arr, KeySymbolic<T, U> getterKeySymbol) {
+        Map<T, Double> elFrequency = new HashMap<>();
+        for (U el : arr) {
+            T key = getterKeySymbol.getKeySymbolic(el);
+            elFrequency.put(key, elFrequency.getOrDefault(key, 0.0) + 1);
+        }
+        int total = arr.size();
+        Map<T, Double> percentageStatisticsBoard = new HashMap<>();
+        for (T key : elFrequency.keySet()) {
+            Double frequency = elFrequency.get(key);
+            double percentage = frequency / total * 100;
+            percentageStatisticsBoard.put(key, percentage);
+        }
+        return percentageStatisticsBoard;
+    }
+
+    public static <T, U> void printPercentageStatistics(ArrayList<U> arr, KeySymbolic<T, U> getterKeySymbol) {
+        Map<T, Double> data = percentageStatistics(arr, getterKeySymbol);
+        data.forEach((key, value) -> System.out.println(key + ": " + value));
     }
 
     public static void writeSinhVienListToFile(ArrayList<SinhVien> sinhVienList, String fileName) throws IOException {
@@ -184,6 +234,15 @@ public class SinhVienController {
             if (writer != null) {
                 writer.close();
             }
+        }
+    }
+
+    public static void deleteSinhVien(FoundSinhVien delSinhVien, ArrayList<SinhVien> arr) {
+        if (delSinhVien != null) {
+            arr.remove(delSinhVien.index);
+            System.out.println("Xoa thanh cong");
+        } else {
+            System.out.println("Khong the xoa neu khong ton tai");
         }
     }
 }

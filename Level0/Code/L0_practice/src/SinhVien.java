@@ -63,8 +63,4 @@ public class SinhVien extends Nguoi {
         return "SinhVien{" + "studentId='" + studentId + '\'' + ", universityName='" + universityName + '\'' + ", enrollYear=" + enrollYear + ", gpa=" + gpa + "," + " hocluc=" + this.hocLuc.getAlias() + "} " + super.toString();
     }
 
-    public double getPercentage() {
-        return gpa * 10.0;
-    }
-
 }
