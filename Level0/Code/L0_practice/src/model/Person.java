@@ -1,8 +1,11 @@
+package model;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Nguoi {
+public class Person implements Serializable {
 
-    private static long idIncrement = 1;
+    public static long idIncrement = 1;
     private long id;
     private String name;
     private LocalDate dateOfBirth;
@@ -57,7 +60,7 @@ public class Nguoi {
         this.weight = weight;
     }
 
-    public Nguoi(String name, LocalDate dateOfBirth, String address, Double height, Double weight) {
+    public Person(String name, LocalDate dateOfBirth, String address, Double height, Double weight) {
         this.name = name;
         this.id = idIncrement++;
         this.dateOfBirth = dateOfBirth;
@@ -66,7 +69,7 @@ public class Nguoi {
         this.weight = weight;
     }
 
-    public Nguoi() {
+    public Person() {
 
     }
 
