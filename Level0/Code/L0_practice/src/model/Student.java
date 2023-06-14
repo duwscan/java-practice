@@ -1,5 +1,7 @@
 package model;
 
+import type.Rate;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 

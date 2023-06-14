@@ -1,12 +1,12 @@
-package model;
+package type;
 
 public enum Rate {
-    POOR("POOR"),
-    WEAK("WEAK"),
-    AVG("AVG"),
-    GOOD("GOOD"),
-    EXCELLENT("EXCELLENT"),
-    OUTSTANDING("OUTSTANDING");
+    POOR("Kem"),
+    WEAK("Yeu"),
+    AVG("Trung Binh"),
+    GOOD("Kha"),
+    EXCELLENT("Gioi"),
+    OUTSTANDING("Xuat sac");
 
 
     private String alias;

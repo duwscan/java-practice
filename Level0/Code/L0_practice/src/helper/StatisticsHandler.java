@@ -14,7 +14,7 @@ public class StatisticsHandler {
      * to get the T which is property of U so that we can declare
      * that thing we wanna statistics by percent is that property
      */
-    protected interface KeySymbolic<T, U> {
+    public interface KeySymbolic<T, U> {
         T getKeySymbolic(U item);
     }
 
@@ -36,6 +36,6 @@ public class StatisticsHandler {
 
     public static <T, U> void printPercentageStatistics(ArrayList<U> arr, KeySymbolic<T, U> getterKeySymbol) {
         Map<T, Double> data = percentageStatistics(arr, getterKeySymbol);
-        data.forEach((key, value) -> System.out.println(key + ": " + value));
+        data.forEach((key, value) -> System.out.println(key + ": " + value + "%"));
     }
 }

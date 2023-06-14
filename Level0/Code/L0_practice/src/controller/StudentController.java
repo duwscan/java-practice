@@ -3,7 +3,8 @@ package controller;
 import helper.FileHandler;
 import model.Person;
 import model.Student;
-import validator.Validation;
+import type.SearchBy;
+import validator.Validator;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,11 +13,12 @@ import java.util.List;
 
 import static helper.FileHandler.readListFromFile;
 import static helper.PrintHandler.printByCondition;
-import static validator.Validation.*;
+import static helper.PrintHandler.printLine;
+import static validator.Validator.*;
 
 public class StudentController {
     private static StudentController studentController;
-    private ArrayList<Student> list;
+    private final ArrayList<Student> list;
     private final String dataSource = "students.dat";
 
     private StudentController() {
@@ -33,7 +35,7 @@ public class StudentController {
         return studentController;
     }
 
-    public List<Student> getAll() {
+    public ArrayList<Student> getAll() {
         return list;
     }
 
@@ -57,8 +59,8 @@ public class StudentController {
     }
 
     public Student createAStudentByConsole() {
-        String name = getInput("Nhap vao ten sinh vien(Ten <" + Validation.MAX_NAME_LENGTH + "):", String::trim, Validation::nameRule);
-        LocalDate dob = getInput("Nhap vao ngay thang nam sinh(YYYY-MM-DD)(Y >" + Validation.MIN_START_YEAR + "):", input -> {
+        String name = getInput("Nhap vao ten sinh vien(Ten <" + Validator.MAX_NAME_LENGTH + "):", String::trim, Validator::nameRule);
+        LocalDate dob = getInput("Nhap vao ngay thang nam sinh(YYYY-MM-DD)(Y >" + Validator.MIN_START_YEAR + "):", input -> {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date;
             try {
@@ -67,16 +69,17 @@ public class StudentController {
                 throw new RuntimeException(e);
             }
             return date;
-        }, Validation::dateOfBirthRule);
-        String address = getInput("Nhap vao dia chi (Chuoi <" + Validation.MAX_ADDRESS_LENGTH + "):", String::trim, Validation::addressRule);
-        Double height = getInput("Nhap vao chieu cao don vi tu cm " + Validation.MIN_HEIGHT + "-" + Validation.MAX_HEIGHT + " :", Double::parseDouble, Validation::heightRule);
-        Double weight = getInput("Nhap vao can nang don vi tu kg  " + Validation.MIN_WEIGHT + "-" + Validation.MAX_WEIGHT + " :", Double::parseDouble, Validation::weightRule);
-        String school = getInput("Nhap vao truong hoc  (Chuoi <" + Validation.MAX_SCHOOL_LENGTH + "):", String::trim, Validation::schoolNameRule);
-        int enrollYear = getInput("Nhap vao can nam bat dau hoc Y > " + Validation.MIN_START_YEAR + " :", Integer::parseInt, Validation::enrollYearRule);
-        double gpa = getInput("Nhap vao diem trung binh tich luy " + MIN_GPA + "-" + MAX_GPA + ":", Double::parseDouble, Validation::gpaRule);
+        }, Validator::dateOfBirthRule);
+        String address = getInput("Nhap vao dia chi (Chuoi <" + Validator.MAX_ADDRESS_LENGTH + "):", String::trim, Validator::addressRule);
+        Double height = getInput("Nhap vao chieu cao don vi tu cm " + Validator.MIN_HEIGHT + "-" + Validator.MAX_HEIGHT + " :", Double::parseDouble, Validator::heightRule);
+        Double weight = getInput("Nhap vao can nang don vi tu kg  " + Validator.MIN_WEIGHT + "-" + Validator.MAX_WEIGHT + " :", Double::parseDouble, Validator::weightRule);
+        String school = getInput("Nhap vao truong hoc  (Chuoi <" + Validator.MAX_SCHOOL_LENGTH + "):", String::trim, Validator::schoolNameRule);
+        int enrollYear = getInput("Nhap vao can nam bat dau hoc Y > " + Validator.MIN_START_YEAR + " :", Integer::parseInt, Validator::enrollYearRule);
+        double gpa = getInput("Nhap vao diem trung binh tich luy " + MIN_GPA + "-" + MAX_GPA + ":", Double::parseDouble, Validator::gpaRule);
         Student aStudent = new Student(name, dob, address, height, weight, school, enrollYear, gpa);
         System.out.println("Sinh vien vua nhap:");
         System.out.println(aStudent);
+        printLine();
         return aStudent;
     }
 
@@ -90,10 +93,13 @@ public class StudentController {
         }
     }
 
-    public <T> FoundStudent findStudent(T key, String action) {
+    public FoundStudent findStudent(String action, SearchBy by) {
+        String qkey = getInput("Nhap vao id sinh vien ban muon " + action, String::trim, Validator::studentIdRule);
         for (int i = 0; i < this.list.size(); i++) {
-            if (studentsFilter(key, action, list.get(i))) {
+            if (studentsFilter(qkey, by, list.get(i))) {
+                printLine();
                 System.out.println(list.get(i));
+                printLine();
                 return new FoundStudent(list.get(i), i);
             }
         }
@@ -101,29 +107,29 @@ public class StudentController {
         return null;
     }
 
-    private static <T> boolean studentsFilter(T key, String action, Student student) {
-        switch (action) {
-            case "STUDENT_ID" -> {
+    private static <T> boolean studentsFilter(T key, SearchBy by, Student student) {
+        switch (by) {
+            case STUDENT_ID -> {
                 return key.equals(student.getStudentId());
             }
-            case "STUDENT_NAME" -> {
+            case STUDENT_NAME -> {
                 return key.equals(student.getName());
             }
         }
         return false;
     }
 
-    public void updateStudent(FoundStudent updateStudent) {
+    public void updateStudent() {
+        FoundStudent updateStudent = findStudent("cap nhat", SearchBy.STUDENT_ID);
         if (updateStudent == null) {
             System.out.println("Khong the cap nhat neu khong ton tai");
             return;
         }
         System.out.println("Ban muon sua thuoc tinh nao cua Sinh Vien:");
-
         for (int i = 0; i < UPDATABLE_PROPERTIES.length; i++) {
             System.out.println((i + 1) + " Sua " + UPDATABLE_PROPERTIES[i]);
         }
-        int choice = getInput("Nhap vao lua chon cua ban:", Integer::parseInt, Validation::updateStudentRule);
+        int choice = getInput("Nhap vao lua chon cua ban:", Integer::parseInt, Validator::updateStudentRule);
         int propertyIndex = choice - 1;
         processUpdate(updateStudent, propertyIndex);
         System.out.println(list.get(updateStudent.index));
@@ -134,9 +140,9 @@ public class StudentController {
         System.out.println("Nhap gia tri ban muon sua cho" + UPDATABLE_PROPERTIES[propertyIndex] + ":");
         switch (UPDATABLE_PROPERTIES[propertyIndex]) {
             case "TEN" ->
-                    updated.setName(getInput("Nhap vao ten sinh vien(Ten <" + Validation.MAX_NAME_LENGTH + "):", String::trim, Validation::nameRule));
+                    updated.setName(getInput("Nhap vao ten sinh vien(Ten <" + Validator.MAX_NAME_LENGTH + "):", String::trim, Validator::nameRule));
             case "NGAY_SINH" ->
-                    updated.setDateOfBirth(getInput("Nhap vao ngay thang nam sinh(YYYY-MM-DD)(Y >" + Validation.MIN_START_YEAR + "):", input -> {
+                    updated.setDateOfBirth(getInput("Nhap vao ngay thang nam sinh(YYYY-MM-DD)(Y >" + Validator.MIN_START_YEAR + "):", input -> {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                         LocalDate date;
                         try {
@@ -145,19 +151,19 @@ public class StudentController {
                             throw new RuntimeException(e);
                         }
                         return date;
-                    }, Validation::dateOfBirthRule));
+                    }, Validator::dateOfBirthRule));
             case "DIA_CHI" ->
-                    updated.setAddress(getInput("Nhap vao dia chi (Chuoi <" + Validation.MAX_ADDRESS_LENGTH + "):", String::trim, Validation::addressRule));
+                    updated.setAddress(getInput("Nhap vao dia chi (Chuoi <" + Validator.MAX_ADDRESS_LENGTH + "):", String::trim, Validator::addressRule));
             case "CHIEU_CAO" ->
-                    updated.setHeight(getInput("Nhap vao chieu cao don vi tu cm " + Validation.MIN_HEIGHT + "-" + Validation.MAX_HEIGHT + " :", Double::parseDouble, Validation::heightRule));
+                    updated.setHeight(getInput("Nhap vao chieu cao don vi tu cm " + Validator.MIN_HEIGHT + "-" + Validator.MAX_HEIGHT + " :", Double::parseDouble, Validator::heightRule));
             case "CAN_NANG" ->
-                    updated.setWeight(getInput("Nhap vao can nang don vi tu kg  " + Validation.MIN_WEIGHT + "-" + Validation.MAX_WEIGHT + " :", Double::parseDouble, Validation::heightRule));
+                    updated.setWeight(getInput("Nhap vao can nang don vi tu kg  " + Validator.MIN_WEIGHT + "-" + Validator.MAX_WEIGHT + " :", Double::parseDouble, Validator::heightRule));
             case "TEN_TRUONG" ->
-                    updated.setUniversityName(getInput("Nhap vao truong hoc  (Chuoi <" + Validation.MAX_SCHOOL_LENGTH + "):", String::trim, Validation::schoolNameRule));
+                    updated.setUniversityName(getInput("Nhap vao truong hoc  (Chuoi <" + Validator.MAX_SCHOOL_LENGTH + "):", String::trim, Validator::schoolNameRule));
             case "NAM_HOC" ->
-                    updated.setEnrollYear(getInput("Nhap vao can nam bat dau hoc Y > " + Validation.MIN_START_YEAR + " :", Integer::parseInt, Validation::enrollYearRule));
+                    updated.setEnrollYear(getInput("Nhap vao can nam bat dau hoc Y > " + Validator.MIN_START_YEAR + " :", Integer::parseInt, Validator::enrollYearRule));
             case "DIEM" -> {
-                updated.setGpa(getInput("Nhap vao diem trung binh tich luy " + MIN_GPA + "-" + MAX_GPA + ":", Double::parseDouble, Validation::gpaRule));
+                updated.setGpa(getInput("Nhap vao diem trung binh tich luy " + MIN_GPA + "-" + MAX_GPA + ":", Double::parseDouble, Validator::gpaRule));
                 updated.setRate();
             }
         }
@@ -166,18 +172,19 @@ public class StudentController {
 
     public void getByRate() {
         System.out.println("Ban xem muon xem danh sach hoc sinh theo:");
-        for (int i = 0; i < HOC_LUC.length; i++) {
-            System.out.println((i + 1) + "." + HOC_LUC[i]);
+        for (int i = 0; i < RATE_TYPE.length; i++) {
+            System.out.println((i + 1) + "." + RATE_TYPE[i]);
         }
-        int choice = getInput("Nhap vao lua chon cua ban:", Integer::parseInt, Validation::rateRule);
-        printByCondition(nodeInList -> nodeInList.getRate().getAlias().equals(HOC_LUC[choice - 1]), list);
+        int choice = getInput("Nhap vao lua chon cua ban:", Integer::parseInt, Validator::rateRule);
+        printByCondition(nodeInList -> nodeInList.getRate().getAlias().equals(RATE_TYPE[choice - 1]), list);
     }
 
     public void writeStudentsListToFile() {
         FileHandler.writeListToFile(this.dataSource, list);
     }
 
-    public void deleteStudent(FoundStudent delStudent) {
+    public void deleteStudent() {
+        FoundStudent delStudent = findStudent("xoa", SearchBy.STUDENT_ID);
         if (delStudent != null) {
             list.remove(delStudent.index);
             System.out.println("Xoa thanh cong");

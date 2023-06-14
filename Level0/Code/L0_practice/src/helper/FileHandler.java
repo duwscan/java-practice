@@ -11,13 +11,12 @@ public class FileHandler {
             if (objList.size() > 0 && objList != null) {
                 currentList.addAll(objList);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             if (e instanceof ClassNotFoundException) {
                 System.out.println("Ban dang doc sai file hoac sai model");
             } else {
-                System.out.println("Loi khi doc file");
+                System.out.println("Loi khi doc file " + filePath);
             }
-            e.printStackTrace();
         }
         return currentList;
     }

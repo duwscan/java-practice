@@ -3,29 +3,14 @@ package validator;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class Validation {
-    public static final int MAX_NAME_LENGTH = 100;
-    public static final int MAX_ADDRESS_LENGTH = 300;
-    public static final double MIN_HEIGHT = 50.0;
-    public static final double MAX_HEIGHT = 300.0;
-    public static final double MIN_WEIGHT = 5.0;
-    public static final double MAX_WEIGHT = 1000.0;
-    public static final int STUDENT_ID_LENGTH = 10;
-    public static final int MAX_SCHOOL_LENGTH = 200;
-    public static final int MIN_START_YEAR = 1900;
-    public static final double MIN_GPA = 0.0;
-    public static final double MAX_GPA = 10.0;
-    public static final String[] UPDATABLE_PROPERTIES = {"TEN", "NGAY_SINH", "DIA_CHI", "CHIEU_CAO", "CAN_NANG", "TEN_TRUONG", "NAM_HOC", "DIEM"};
-    public static final String[] HOC_LUC = {"Kem", "Yeu", "Trung Binh", "Kha", "Gioi", "Xuat sac"};
+import static helper.PrintHandler.printWrongFormatInput;
 
-    static boolean printWrongFormatInput() {
-        System.out.println("Your input is inappropriate!!");
-        // return true vì chỉ khi có lỗi thì hàm này mới được call
-        return true;
-    }
+public class Validator implements Rule {
+
 
     public static <T> T getInput(String prompt, InputParser<T> parser, InputRule<T> validator) {
         Scanner scanner = new Scanner(System.in);
+        Exception error = null;
         T input;
         do {
             System.out.println(prompt);
@@ -33,8 +18,9 @@ public class Validation {
                 input = parser.parse(scanner.nextLine());
             } catch (Exception e) {
                 input = null;
+                error = e;
             }
-        } while ((input == null || !validator.rule(input)) && printWrongFormatInput());
+        } while ((input == null || !validator.rule(input)) && printWrongFormatInput(error));
         return input;
     }
 
@@ -76,6 +62,10 @@ public class Validation {
     }
 
     public static boolean rateRule(int choice) {
-        return choice > 0 && choice <= HOC_LUC.length;
+        return choice > 0 && choice <= RATE_TYPE.length;
+    }
+
+    public static boolean studentIdRule(String input) {
+        return input.length() < 10 && input.length() > 0;
     }
 }
